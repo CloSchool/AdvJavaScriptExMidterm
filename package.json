@@ -1,0 +1,14 @@
+{
+  "name": "midterm",
+  "version": "1.0.0",
+  "description": "Advanced JS Midterm",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nick Taggart",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.3.0"
+  }
+}

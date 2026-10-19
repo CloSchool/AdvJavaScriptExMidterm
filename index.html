@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="utf-8" >
+    <title>Get the Current Weather</title>
+</head>
+<body>
+    <div id="wrapper">
+        <h1>Advanced JavaScript midterm</h1>
+
+        <form action="/AddWeather" method="post">
+            Enter City Name<input type="text" id="txtCity" name="txtCity" >
+            <input id="btnGetWeather" type="button" value="Get weather Forecast" ><BR><BR>
+            <fieldset>
+                <legend>WEATHER INFORMATION:</legend>
+                <div>
+                    Current Temp:<input type="text" id="txtCurrentTemp" name="txtCurrentTemp" readonly ><br >
+                    Latitude: <input type="text" id="txtLat" name="txtLat" readonly> <br>
+                    Longitude: <input type="text" id="txtLong" name="txtLong" readonly><br>
+                </div>
+                <input id="btnSubmit" type="submit" value="Save Weather Data to File" >
+            </fieldset>
+        </form>
+    </div>
+
+    <script>
+        async function GetWeather(city) {
+            try {
+                const locations = await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}`)).json();
+
+                const { latitude, longitude } = locations.results[0];
+
+                const { current: { temperature_2m: temperature } } = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m`)).json();
+
+                return { status: true, latitude, longitude, temperature };
+            } catch (error) {
+                console.error(error);
+
+                return { status: false }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("btnGetWeather").addEventListener("click", async () => {
+                const city = document.getElementById("txtCity").value;
+                if (!city) return alert("Please input a city.");
+
+                const weather = await GetWeather(city);
+                if (!weather.status) return alert("Something went wrong, please try again.");
+
+                document.getElementById("txtLat").value = weather.latitude;
+                document.getElementById("txtLong").value = weather.longitude;
+                document.getElementById("txtCurrentTemp").value = weather.temperature;
+            });
+        });
+    </script>
+</body>
+</html>
